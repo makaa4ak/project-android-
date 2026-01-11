@@ -1,0 +1,13 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Базовая тема для светлой темы -->
+    <style name="Base.Theme.weather_project.Light" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary_light</item>
+        <item name="colorSecondary">@color/secondary_light</item>
+        <item name="android:statusBarColor">@color/primary_light</item>
+    </style>
+
+
+    <!-- Основная тема приложения наследует Base -->
+    <style name="Theme.weather_project" parent="Base.Theme.weather_project.Light" />
+</resources>

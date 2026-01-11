@@ -1,0 +1,12 @@
+<resources>
+    <!-- Светлая тема -->
+    <color name="primary_light">#2196F3</color>      <!-- голубой -->
+    <color name="secondary_light">#03DAC5</color>    <!-- мятный -->
+
+    <!-- Тёмная тема -->
+    <color name="primary_dark">#0D47A1</color>       <!-- тёмно-синий -->
+    <color name="secondary_dark">#00ACC1</color>     <!-- тёмный мятный -->
+
+    <color name="teal_200">#03DAC5</color>
+
+</resources>
