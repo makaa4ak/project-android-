@@ -66,8 +66,12 @@ class MainActivity : AppCompatActivity() {
                     RetrofitClient.api.getWeatherByCity(
                         city = city,
                         apiKey = API_KEY,
-                        units = "metric"
+                        units = "metric",
+                        lang = "ru"
+
+
                     )
+
 
                 // Обновляем UI на главном потоке
                 withContext(Dispatchers.Main) {
@@ -89,12 +93,44 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUI(weather: CurrentWeatherResponse, city: String) {
         val temp = weather.main.temp.toInt()
-        val description = weather.weather[0].description
+        val description = weather.weather[0].description.lowercase()
+        val main = weather.weather[0].main.lowercase()
 
         binding.apply {
             tvCity.text = city
             tvTemp.text = "$temp°C"
-            tvDescription.text = description
+            tvDescription.text = description.replaceFirstChar { it.uppercase() }
+            ivWeather.setImageResource(getWeatherIcon(main, description))
+            rootLayout.setBackgroundResource(
+                getWeatherBackground(main, description)
+            )
         }
     }
+
+    private fun getWeatherIcon(main: String, description: String): Int {
+        return when {
+            "thunder" in main -> R.drawable.ic_thunder
+            "snow" in main -> R.drawable.ic_snow
+            "rain" in main -> R.drawable.ic_rain
+            "cloud" in main && "few" in description -> R.drawable.ic_partly_cloudy
+            "cloud" in main -> R.drawable.ic_cloudy
+            "fog" in main || "mist" in main || "haze" in main -> R.drawable.ic_fog
+            "clear" in main -> R.drawable.ic_sunny
+            else -> R.drawable.ic_sunny
+        }
+    }
+
+    private fun getWeatherBackground(main: String, description: String): Int {
+        return when {
+            "thunder" in main -> R.drawable.bg_rain
+            "snow" in main -> R.drawable.bg_snow
+            "rain" in main -> R.drawable.bg_rain
+            "cloud" in main -> R.drawable.bg_cloudy
+            "clear" in main -> R.drawable.bg_clear
+            else -> R.drawable.bg_snow
+        }
+    }
+
+
+
 }

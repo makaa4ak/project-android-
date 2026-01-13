@@ -70,18 +70,36 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Температура -->
-    <TextView
-        android:id="@+id/tvTemp"
+    <LinearLayout
+        android:id="@+id/llTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="--°C"
-        android:textColor="@android:color/white"
-        android:textSize="60sp"
-        android:textStyle="bold"
+        android:orientation="horizontal"
+        android:gravity="center"
         android:layout_marginTop="32dp"
         app:layout_constraintTop_toBottomOf="@id/btnSearch"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvTemp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="--°C"
+            android:textColor="@android:color/white"
+            android:textSize="60sp"
+            android:textStyle="bold"/>
+
+        <ImageView
+            android:id="@+id/ivWeather"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="12dp"
+            android:contentDescription="Иконка погоды"
+            android:src="@drawable/ic_sunny"/>
+
+    </LinearLayout>
+
 
     <!-- Описание погоды -->
     <TextView
@@ -92,8 +110,9 @@
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/tvTemp"
+        app:layout_constraintTop_toBottomOf="@id/llTemp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

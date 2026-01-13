@@ -20,7 +20,8 @@ interface ApiService {
     suspend fun getWeatherByCity(
         @Query("q") city: String,
         @Query("appid") apiKey: String,
-        @Query("units") units: String
+        @Query("units") units: String,
+        @Query("lang") lang: String
     ): CurrentWeatherResponse
 
 
