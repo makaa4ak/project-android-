@@ -3,6 +3,7 @@ package com.example.weather_project
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +19,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val API_KEY = "61661e133622d3aa7cb8f10fbd34c900"
+
+    private val lastCities = mutableListOf<String>()
 
     private val cities = listOf(
         "Киев",
@@ -45,10 +48,12 @@ class MainActivity : AppCompatActivity() {
         )
         binding.etCity.setAdapter(adapter)
 
+        // Поиск города
         binding.btnSearch.setOnClickListener {
             val city = binding.etCity.text.toString().trim()
             if (city.isNotEmpty()) {
                 fetchWeatherByCity(city)
+                addCityToLastSearches(city)
             } else {
                 Toast.makeText(this, "Введите город", Toast.LENGTH_SHORT).show()
             }
@@ -56,24 +61,19 @@ class MainActivity : AppCompatActivity() {
 
         // Город по умолчанию
         fetchWeatherByCity("Одесса")
+        addCityToLastSearches("Одесса")
     }
 
     private fun fetchWeatherByCity(city: String) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                // Получаем погоду по имени города
-                val weather: CurrentWeatherResponse =
-                    RetrofitClient.api.getWeatherByCity(
-                        city = city,
-                        apiKey = API_KEY,
-                        units = "metric",
-                        lang = "ru"
+                val weather = RetrofitClient.api.getWeatherByCity(
+                    city = city,
+                    apiKey = API_KEY,
+                    units = "metric",
+                    lang = "ru"
+                )
 
-
-                    )
-
-
-                // Обновляем UI на главном потоке
                 withContext(Dispatchers.Main) {
                     updateUI(weather, city)
                 }
@@ -100,12 +100,45 @@ class MainActivity : AppCompatActivity() {
             tvCity.text = city
             tvTemp.text = "$temp°C"
             tvDescription.text = description.replaceFirstChar { it.uppercase() }
+
             ivWeather.setImageResource(getWeatherIcon(main, description))
-            rootLayout.setBackgroundResource(
-                getWeatherBackground(main, description)
-            )
+            rootLayout.setBackgroundResource(getWeatherBackground(main))
         }
     }
+
+    private fun addCityToLastSearches(city: String) {
+        if (lastCities.contains(city)) return
+
+        lastCities.add(0, city)
+
+        if (lastCities.size > 5) {
+            lastCities.removeLast()
+        }
+
+        updateLastSearchesUI()
+    }
+
+    private fun updateLastSearchesUI() {
+        binding.llLastSearches.removeAllViews()
+
+        for (city in lastCities) {
+            val button = Button(this).apply {
+                text = city
+                textSize = 12f
+                setPadding(24, 12, 24, 12)
+
+                // Сделать фон прозрачным
+                setBackgroundColor(android.graphics.Color.TRANSPARENT)
+
+                setOnClickListener {
+                    fetchWeatherByCity(city)
+                }
+            }
+
+            binding.llLastSearches.addView(button)
+        }
+    }
+
 
     private fun getWeatherIcon(main: String, description: String): Int {
         return when {
@@ -120,17 +153,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getWeatherBackground(main: String, description: String): Int {
+    private fun getWeatherBackground(main: String): Int {
         return when {
             "thunder" in main -> R.drawable.bg_rain
             "snow" in main -> R.drawable.bg_snow
             "rain" in main -> R.drawable.bg_rain
             "cloud" in main -> R.drawable.bg_cloudy
             "clear" in main -> R.drawable.bg_clear
-            else -> R.drawable.bg_snow
+            else -> R.drawable.bg_clear
         }
     }
-
-
-
 }
